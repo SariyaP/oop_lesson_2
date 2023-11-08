@@ -146,11 +146,11 @@ print()
 my_table5_filteredMy = my_table5.filter(lambda x: x['gender'] == 'M').filter(lambda x: x['survived'] == 'yes')
 my_table5_filteredMn = my_table5.filter(lambda x: x['gender'] == 'M')
 print(f"The survival rate of male: "
-      f"{len(my_table5_filteredMy.table)/len(my_table5_filteredMn.table):.2f}")
+      f"{(len(my_table5_filteredMy.table)/len(my_table5_filteredMn.table))*100:.2f}%")
 my_table5_filteredFy = my_table5.filter(lambda x: x['gender'] == 'F').filter(lambda x: x['survived'] == 'yes')
 my_table5_filteredFn = my_table5.filter(lambda x: x['gender'] == 'F')
 print(f"The survival rate of female: "
-      f"{len(my_table5_filteredFy.table)/len(my_table5_filteredFn.table):.2f}")
+      f"{(len(my_table5_filteredFy.table)/len(my_table5_filteredFn.table))*100:.2f}%")
 
 
 
