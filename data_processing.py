@@ -104,6 +104,7 @@ my_DB.insert(table5)
 my_table1 = my_DB.search('cities')
 my_table3 = my_DB.search('players')
 my_table4 = my_DB.search('teams')
+my_table5 = my_DB.search('titanic')
 
 # What player on a team with “ia” in the team name
 # played less than 200 minutes and made more than 100 passes?
@@ -131,6 +132,28 @@ my_table3_filtered2 = my_table3.filter(lambda x: x['position'] == 'midfielder')
 print(f"Average number of passes made by midfielders: "
       f"{my_table3_filtered2.aggregate(lambda x: sum(x)/len(x), 'passes'):.2f}")
 print()
+
+# The average fare paid by passengers in the first class versus in the third class
+my_table5_filtered1 = my_table5.filter(lambda x: x['class'] == '1')
+print(f"Average fare paid by passengers in the first class: "
+      f"{my_table5_filtered1.aggregate(lambda x: sum(x)/len(x), 'fare'):.2f}")
+my_table5_filtered2 = my_table5.filter(lambda x: x['class'] == '3')
+print(f"Average fare paid by passengers in the third class: "
+      f"{my_table5_filtered2.aggregate(lambda x: sum(x)/len(x), 'fare'):.2f}")
+print()
+
+# The survival rate of male versus female passengers
+my_table5_filteredMy = my_table5.filter(lambda x: x['gender'] == 'M').filter(lambda x: x['survived'] == 'yes')
+my_table5_filteredMn = my_table5.filter(lambda x: x['gender'] == 'M')
+print(f"The survival rate of male: "
+      f"{len(my_table5_filteredMy.table)/len(my_table5_filteredMn.table):.2f}")
+my_table5_filteredFy = my_table5.filter(lambda x: x['gender'] == 'F').filter(lambda x: x['survived'] == 'yes')
+my_table5_filteredFn = my_table5.filter(lambda x: x['gender'] == 'F')
+print(f"The survival rate of female: "
+      f"{len(my_table5_filteredFy.table)/len(my_table5_filteredFn.table):.2f}")
+
+
+
 # print("Test filter: only filtering out cities in Italy")
 # my_table1_filtered = my_table1.filter(lambda x: x['country'] == 'Italy')
 # print(my_table1_filtered)
