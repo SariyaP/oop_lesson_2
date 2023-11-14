@@ -74,10 +74,22 @@ class Table:
                 filtered_table.table.append(item1)
         return filtered_table
 
+    def __is_float(self, element):
+        if element is None:
+            return False
+        try:
+            float(element)
+            return True
+        except ValueError:
+            return False
+
     def aggregate(self, function, aggregation_key):
         temps = []
         for item1 in self.table:
-            temps.append(float(item1[aggregation_key]))
+            if self.__is_float(item1[aggregation_key]):
+                temps.append(float(item1[aggregation_key]))
+            else:
+                temps.append(item1[aggregation_key])
         return function(temps)
 
     def select(self, attributes_list):
@@ -93,6 +105,22 @@ class Table:
     def __str__(self):
         return self.table_name + ':' + str(self.table)
 
+    def pivot_table(self, keys: list, values: list, agg_funcs: list):
+        unique_data_set = {tuple((key, item[key])
+                                 for key in keys) for item in self.table}
+        sorted_data = sorted([dict(item) for item in unique_data_set], key=lambda x: tuple(
+            x[key] for key in reversed(keys)))
+        temps = []
+        for item in sorted_data:
+            filtered = self
+            agg = []
+            for key in item:
+                filtered = filtered.filter(lambda x: x[key] == item[key])
+            for x, y in enumerate(values):
+                agg.append(filtered.aggregate(agg_funcs[x], y))
+            temps.append([list(item.values()), agg])
+        return reversed(temps)
+
 
 table1 = Table('cities', cities)
 table2 = Table('countries', countries)
@@ -106,9 +134,12 @@ my_DB.insert(table3)
 my_DB.insert(table4)
 my_DB.insert(table5)
 my_table1 = my_DB.search('cities')
+my_table2 = my_DB.search('countries')
 my_table3 = my_DB.search('players')
 my_table4 = my_DB.search('teams')
 my_table5 = my_DB.search('titanic')
+table2 = my_table1.join(my_table2, 'country')
+football = my_DB.search('players').join(my_DB.search('teams'), 'team')
 
 # What player on a team with “ia” in the team name
 # played less than 200 minutes and made more than 100 passes?
@@ -156,6 +187,28 @@ my_table5_filteredFn = my_table5.filter(lambda x: x['gender'] == 'F')
 print(f"The survival rate of female: "
       f"{len(my_table5_filteredFy.table) / len(my_table5_filteredFn.table):.2f}")
 
+print('Pivot table sorted by embarked,gender, class and aggregated by min fare, max fare, average fare, and count:')
+result1 = my_table5.pivot_table(['embarked', 'gender', 'class'], ['fare', 'fare', 'fare', 'last'], [
+    lambda x: min(x), lambda x: max(x), lambda x: sum(x) / len(x), lambda x: len(x)])
+[print(i) for i in result1]
+print('')
+
+print('Pivot table sorted by position and aggregated by average passes, and average shots:')
+result2 = football.pivot_table(['position'], ['passes', 'shots'],
+                          [lambda x: sum(x) / len(x), lambda x: len(x), lambda x: sum(x) / len(x), lambda x: len(x)])
+[print(i) for i in result2]
+print('')
+
+print('Pivot table sorted by coastline and eu by average temp, min latitude, max latitude:')
+result3 = table2.pivot_table(['coastline', 'EU'], ['temperature', 'latitude', 'latitude'],
+                                    [lambda x: sum(x) / len(x), lambda x: min(x), lambda x: max(x)])
+[print(i) for i in result3]
+print('')
+
+table4 = Table('titanic', titanic)
+my_DB.insert(table4)
+my_table4 = my_DB.search('titanic')
+my_pivot = my_table4.pivot_table(['embarked', 'gender', 'class'], ['fare', 'fare', 'fare', 'last'], [lambda x: min(x), lambda x: max(x), lambda x: sum(x)/len(x), lambda x: len(x)])
 # print("Test filter: only filtering out cities in Italy")
 # my_table1_filtered = my_table1.filter(lambda x: x['country'] == 'Italy')
 # print(my_table1_filtered)
