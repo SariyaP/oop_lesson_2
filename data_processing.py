@@ -33,6 +33,7 @@ with open(os.path.join(__location__, 'Titanic.csv')) as f:
     for r in rows:
         titanic.append(dict(r))
 
+
 class DB:
     def __init__(self):
         self.database = []
@@ -45,13 +46,16 @@ class DB:
             if table.table_name == table_name:
                 return table
         return None
-    
+
+
 import copy
+
+
 class Table:
     def __init__(self, table_name, table):
         self.table_name = table_name
         self.table = table
-    
+
     def join(self, other_table, common_key):
         joined_table = Table(self.table_name + '_joins_' + other_table.table_name, [])
         for item1 in self.table:
@@ -62,20 +66,20 @@ class Table:
                     dict1.update(dict2)
                     joined_table.table.append(dict1)
         return joined_table
-    
+
     def filter(self, condition):
         filtered_table = Table(self.table_name + '_filtered', [])
         for item1 in self.table:
             if condition(item1):
                 filtered_table.table.append(item1)
         return filtered_table
-    
+
     def aggregate(self, function, aggregation_key):
         temps = []
         for item1 in self.table:
             temps.append(float(item1[aggregation_key]))
         return function(temps)
-    
+
     def select(self, attributes_list):
         temps = []
         for item1 in self.table:
@@ -109,7 +113,7 @@ my_table5 = my_DB.search('titanic')
 # What player on a team with “ia” in the team name
 # played less than 200 minutes and made more than 100 passes?
 # Select to display the player surname, team, and position
-my_table3_filtered = my_table3.filter(lambda x: 'ia' in x['team']).filter(lambda x: float(x['minutes']) < 200).\
+my_table3_filtered = my_table3.filter(lambda x: 'ia' in x['team']).filter(lambda x: float(x['minutes']) < 200). \
     filter(lambda x: float(x['passes']) > 100)
 for i in my_table3_filtered.table:
     print(f"Name: {i['surname']:<13} Team: {i['team']:<10} Position: {i['position']:<10}")
@@ -118,39 +122,39 @@ print()
 # The average number of games played for teams ranking below 10 versus teams ranking above or equal 10
 my_table4_filtered1 = my_table4.filter(lambda x: int(x['ranking']) < 10)
 print(f"Average number of game (ranking below 10): "
-      f"{my_table4_filtered1.aggregate(lambda x: sum(x)/len(x), 'games'):.2f}")
+      f"{my_table4_filtered1.aggregate(lambda x: sum(x) / len(x), 'games'):.2f}")
 my_table4_filtered2 = my_table4.filter(lambda x: int(x['ranking']) >= 10)
 print(f"Average number of game (ranking above or equal 10): "
-      f"{my_table4_filtered2.aggregate(lambda x: sum(x)/len(x), 'games'):.2f}")
+      f"{my_table4_filtered2.aggregate(lambda x: sum(x) / len(x), 'games'):.2f}")
 print()
 
 # The average number of passes made by forwards versus by midfielders
 my_table3_filtered1 = my_table3.filter(lambda x: x['position'] == 'forward')
 print(f"Average number of passes made by forwards: "
-      f"{my_table3_filtered1.aggregate(lambda x: sum(x)/len(x), 'passes'):.2f}")
+      f"{my_table3_filtered1.aggregate(lambda x: sum(x) / len(x), 'passes'):.2f}")
 my_table3_filtered2 = my_table3.filter(lambda x: x['position'] == 'midfielder')
 print(f"Average number of passes made by midfielders: "
-      f"{my_table3_filtered2.aggregate(lambda x: sum(x)/len(x), 'passes'):.2f}")
+      f"{my_table3_filtered2.aggregate(lambda x: sum(x) / len(x), 'passes'):.2f}")
 print()
 
 # The average fare paid by passengers in the first class versus in the third class
 my_table5_filtered1 = my_table5.filter(lambda x: x['class'] == '1')
 print(f"Average fare paid by passengers in the first class: "
-      f"{my_table5_filtered1.aggregate(lambda x: sum(x)/len(x), 'fare'):.2f}")
+      f"{my_table5_filtered1.aggregate(lambda x: sum(x) / len(x), 'fare'):.2f}")
 my_table5_filtered2 = my_table5.filter(lambda x: x['class'] == '3')
 print(f"Average fare paid by passengers in the third class: "
-      f"{my_table5_filtered2.aggregate(lambda x: sum(x)/len(x), 'fare'):.2f}")
+      f"{my_table5_filtered2.aggregate(lambda x: sum(x) / len(x), 'fare'):.2f}")
 print()
 
 # The survival rate of male versus female passengers
 my_table5_filteredMy = my_table5.filter(lambda x: x['gender'] == 'M').filter(lambda x: x['survived'] == 'yes')
 my_table5_filteredMn = my_table5.filter(lambda x: x['gender'] == 'M')
 print(f"The survival rate of male: "
-      f"{len(my_table5_filteredMy.table)/len(my_table5_filteredMn.table):.2f}")
+      f"{len(my_table5_filteredMy.table) / len(my_table5_filteredMn.table):.2f}")
 my_table5_filteredFy = my_table5.filter(lambda x: x['gender'] == 'F').filter(lambda x: x['survived'] == 'yes')
 my_table5_filteredFn = my_table5.filter(lambda x: x['gender'] == 'F')
 print(f"The survival rate of female: "
-      f"{len(my_table5_filteredFy.table)/len(my_table5_filteredFn.table):.2f}")
+      f"{len(my_table5_filteredFy.table) / len(my_table5_filteredFn.table):.2f}")
 
 # print("Test filter: only filtering out cities in Italy")
 # my_table1_filtered = my_table1.filter(lambda x: x['country'] == 'Italy')
