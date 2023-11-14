@@ -152,8 +152,6 @@ my_table5_filteredFn = my_table5.filter(lambda x: x['gender'] == 'F')
 print(f"The survival rate of female: "
       f"{len(my_table5_filteredFy.table)/len(my_table5_filteredFn.table):.2f}")
 
-
-
 # print("Test filter: only filtering out cities in Italy")
 # my_table1_filtered = my_table1.filter(lambda x: x['country'] == 'Italy')
 # print(my_table1_filtered)
