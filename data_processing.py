@@ -205,10 +205,12 @@ result3 = table2.pivot_table(['coastline', 'EU'], ['temperature', 'latitude', 'l
 [print(i) for i in result3]
 print('')
 
-table4 = Table('titanic', titanic)
-my_DB.insert(table4)
-my_table4 = my_DB.search('titanic')
-my_pivot = my_table4.pivot_table(['embarked', 'gender', 'class'], ['fare', 'fare', 'fare', 'last'], [lambda x: min(x), lambda x: max(x), lambda x: sum(x)/len(x), lambda x: len(x)])
+print('Pivot table sorted by class, gender, survive and aggregated by survive count and fare')
+result4 = my_table5.pivot_table(['class', 'gender', 'survived'], ['survived', 'fare'], [
+    lambda x: len(x), lambda x: sum(x) / len(x)])
+[print(i) for i in result4]
+print('')
+
 # print("Test filter: only filtering out cities in Italy")
 # my_table1_filtered = my_table1.filter(lambda x: x['country'] == 'Italy')
 # print(my_table1_filtered)
